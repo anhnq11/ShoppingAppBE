@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/d667353117.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <title>Tài khoản</title>
+</head>
+
+<body>
+    <div class="app">
+        <%- include('navigator')%>
+            <div class="container">
+                <div class="container">
+                    <div class="row my-2">
+                        <!-- Modal add new account -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm tài khoản</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" action="/users/users">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="fullname"
+                                                    placeholder="Họ và tên" name="fullname" required>
+                                                <label for="fullname">Họ và tên</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="username"
+                                                    placeholder="Tên đăng nhập" name="username" required>
+                                                <label for="username">Tên đăng nhập</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    placeholder="name@example.com">
+                                                <label for="email">Địa chỉ email</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="password"
+                                                    name="password" placeholder="Mật khẩu" required>
+                                                <label for="password">Mật khẩu</label>
+                                            </div>
+                                            <div class="form-floating">
+                                                <select class="form-select" id="role" name="id_role"
+                                                    aria-label="Floating label select example">
+                                                    <option selected>Loại tài khoản</option>
+                                                    <%listRoles.forEach((role)=>{ %>
+                                                        <option value="<%= role._id %>">
+                                                            <%= role.name %>
+                                                        </option>
+                                                        <% });%>
+                                                </select>
+                                                <label for="role">Loại tài khoản</label>
+                                            </div>
+                                            <div class="modal-footer mt-3">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Thêm</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- products list -->
+                    <div>
+                        <table class="table caption-top table-bordered">
+                            <div class="table-caption row">
+                                <h3 class="fw-semibold col-11">Danh sách tài khoản</h3>
+                                <!-- Button to open modal -->
+                                <div class="col align-middle">
+                                    <i class="fa-solid fa-circle-plus fa-2xl" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" style="color: #1152fd;"></i>
+                                </div>
+                            </div>
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="text-center align-middle" scope="col">#</th>
+                                    <th class="text-center align-middle" scope="col">Avatar</th>
+                                    <th class="text-center align-middle" scope="col">Fullname</th>
+                                    <th class="text-center align-middle" scope="col">Username</th>
+                                    <th class="text-center align-middle" scope="col">Email</th>
+                                    <th class="text-center align-middle" scope="col">Chức vụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%listUsers.forEach((user, index)=>{ %>
+                                    <tr>
+                                        <th class="text-center align-middle" scope="row">
+                                            <%= (index + 1) %>
+                                        </th>
+
+                                        <% if (user.image) { %>
+                                            <td class="text-center align-middle">
+                                                <img src="<%= user.image %>" alt="User Image" width="50" height="50" >
+                                            </td>
+                                        <% } else { %>
+                                            <td class="text-center align-middle">N/A</td>
+                                            <% } %>
+
+                                        <td class="text-center align-middle">
+                                            <a href="/users/users/<%= user._id %>"
+                                                style="text-decoration: none; color: black;" >
+                                                    <%= user.fullname %>
+                                            </a></td>
+
+                                        <td class="text-center align-middle">
+                                                <%= user.username %>
+                                            </td>
+
+                                        <td class="text-center align-middle">
+                                                <%= user.email %>
+                                            </td>
+
+                                        <td class="text-center align-middle">
+                                                <%= user.id_role.name %>
+                                            </td>
+                                    </tr>
+                                    <% });%>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
