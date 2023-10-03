@@ -25,11 +25,14 @@ router.get('/products', productsController.listProducts);
 // Lấy danh sách giỏ hàng
 router.get('/carts', productsController.getListCart);
 
-// Thêm/Update giỏ hàng
-router.post('/carts', productsController.addOrUpdate);
+// Thêm/Update sản phẩm vào giỏ hàng
+router.post('/carts', productsController.addQuantityToCart);
 
-// Update/Xóa giỏ hàng
-router.put('/carts', productsController.minusOrDelete);
+// Update/Xóa sản phẩm vào giỏ hàng
+router.put('/carts', productsController.removeQuantityToCart);
+
+// Xóa sản phẩm trong giỏ hàng
+router.delete('/carts/item', productsController.deleteProductsFromCart);
 
 // Xóa giỏ hàng
 router.delete('/carts', productsController.deleteCart);

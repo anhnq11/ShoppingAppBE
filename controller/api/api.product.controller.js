@@ -3,6 +3,7 @@ var cartModel = require('../../models/cart.model');
 var invoiceModel = require('../../models/invoice.model');
 var favoursModel = require('../../models/favourites.model');
 var fs = require('fs');
+const { log } = require('console');
 
 exports.listCategories = async (req, res, next) => {
     try {
@@ -39,9 +40,7 @@ exports.listProducts = async (req, res, next) => {
 }
 
 // Giỏ hàng
-
-exports.addOrUpdate = async (req, res, next) => {
-    console.log(req.body);
+exports.addQuantityToCart = async (req, res, next) => {
     try {
         let myCart = await cartModel.cartModel.findOne({
             user_id: req.body.user_id,
@@ -83,33 +82,37 @@ exports.addOrUpdate = async (req, res, next) => {
     }
 }
 
-exports.minusOrDelete = async (req, res, next) => {
+exports.removeQuantityToCart = async (req, res, next) => {
     try {
-        console.log(req.body._id);
-        const myCart = await cartModel.cartModel.findOne({ _id: req.body._id });
-        let quantity = myCart.quantity;
-
-        if (quantity === 1) {
-            // Delete from cart
-            const rs = await cartModel.cartModel.findByIdAndDelete(req.body._id);
-
-            if (rs) {
-                return res.status(200).json({ status: 'delete success' });
-            } else {
-                return res.status(500).json({ status: 'error', message: 'Failed to delete cart' });
-            }
-        } else {
+        let mQuantity = req.body.quantity;
+        
+        if (mQuantity >= 2) {
+            mQuantity--;
             // Update quantity
-            quantity--;
             const result = await cartModel.cartModel.findByIdAndUpdate(req.body._id, {
-                $set: { quantity: quantity }
+                $set: { quantity: mQuantity }
             }, { new: true });
 
             if (result) {
-                return res.status(200);
+                return res.status(200).json(result);
             } else {
                 return res.status(500).json({ status: 'error', message: 'Failed to update cart' });
             }
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+exports.deleteProductsFromCart = async (req, res, next) => {
+    try {
+        // Delete from cart
+        const rs = await cartModel.cartModel.findByIdAndDelete(req.body._id);
+        if (rs) {
+            return res.status(200).json({ status: 'delete success' });
+        } else {
+            return res.status(500).json({ status: 'error', message: 'Failed to delete cart' });
         }
     } catch (err) {
         console.log(err);
