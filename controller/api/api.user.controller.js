@@ -1,10 +1,11 @@
-var myModels = require('../../models/user.model');
+var userModel = require('../../models/user.model');
+var addressModel = require('../../models/address.model');
 var fs = require('fs');
-const path = require('node:path');
+const { log } = require('console');
 
 exports.listRoles = async (req, res, next) => {
     try {
-        let listRoles = await myModels.roleModel.find();
+        let listRoles = await userModel.roleModel.find();
         if (listRoles.length > 0) {
             res.status(200).json({ status: 'success', data: listRoles });
         }
@@ -17,32 +18,6 @@ exports.listRoles = async (req, res, next) => {
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
-
-// exports.listUsers = async (req, res, next) => {
-//     try {
-//         let filter = null;
-//         if (typeof (req.query.id_role) != 'undefined') {
-//             filter = { id_role: req.query.id_role };
-//         }
-//         if (typeof (req.query.username) != 'undefined') {
-//             filter = { username: req.query.username };
-//         }
-//         if (typeof (req.query.email) != 'undefined') {
-//             filter = { email: req.query.email };
-//         }
-//         let listUsers = await myModels.userModel.find(filter).populate('id_role', 'name');
-//         if (listUsers.length > 0) {
-//             res.status(200).json({ status: 'success', data: listUsers });
-//         }
-//         else {
-//             res.status(404).json({ status: 'Null' });
-//         }
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500).json({ status: 'error', message: err.message });
-//     }
-// }
 
 // Create a new user account
 exports.createNewUser = async (req, res, next) => {
@@ -61,9 +36,9 @@ exports.createNewUser = async (req, res, next) => {
             email: req.body.email,
             // image: imageBase64,
         }
-        const result = await myModels.userModel.create(newUser);
+        const result = await userModel.userModel.create(newUser);
         if (result) {
-            const user = await myModels.userModel.findOne({ username: req.body.username, password: req.body.password }).populate('id_role', 'name');
+            const user = await userModel.userModel.findOne({ username: req.body.username, password: req.body.password }).populate('id_role', 'name');
             res.status(200).json(user);
         }
         else{
@@ -78,7 +53,7 @@ exports.createNewUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        await myModels.userModel.findByIdAndUpdate({ _id: req.params.id }, {
+        await userModel.userModel.findByIdAndUpdate({ _id: req.params.id }, {
             $set: {
                 fullname: req.body.fullname,
                 username: req.body.username,
@@ -98,7 +73,7 @@ exports.updateUser = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         let msg = '';
-        const user = await myModels.userModel.findOne({ username: req.query.username }).populate('id_role', 'name');
+        const user = await userModel.userModel.findOne({ username: req.query.username }).populate('id_role', 'name');
         if (!user || (user.password != req.query.password)) {
             msg = 'Tên đăng nhập hoặc mật khẩu không chính xác!'
             return res.status(404).json({ msg: msg });
@@ -117,12 +92,56 @@ exports.login = async (req, res, next) => {
 // Check valid username
 exports.findUser = async (req, res, next) => {
     try {
-        const user = await myModels.userModel.findOne({ username: req.query.username })
+        const user = await userModel.userModel.findOne({ username: req.query.username })
         if (user) {
             return res.status(404).json({ msg: 'User found' });
         }
         else {
             return res.status(200).json({ msg: 'User not found' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+// Thêm địa chỉ mới
+exports.addNewAddress = async (req, res, next) => {
+    try {
+        const newAddress = {
+            user_id: req.body.user_id,
+            addressname: req.body.addressname,
+            address: req.body.address,
+            address_details: req.body.address_details,
+            is_default: req.body.is_default,
+        }
+        const result = await addressModel.addressModel.create(newAddress);
+        if (result) {
+            res.status(200).json(result);
+        }
+        else{
+            res.status(404).json({ status: 'error', message: 'Thêm địa chỉ thất bại!' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+// Lấy địa chỉ của User
+exports.getAddress = async (req, res, next) => {
+    log(req.query)
+    try {
+        let myAddress = await addressModel.addressModel.find(
+            { user_id: req.query.user_id}
+            );
+        if (myAddress.length > 0) {
+            res.status(200).json({ status: 'success', data: myAddress });
+        }
+        else {
+            res.status(404).json({ status: 'Null' });
         }
     }
     catch (err) {

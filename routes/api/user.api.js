@@ -36,4 +36,10 @@ router.get('/login', userController.login);
 /* Kiểm tra Username */
 router.get('/checkRegis', userController.findUser);
 
+// Thêm địa chỉ mới
+router.post('/address', userController.addNewAddress);
+
+// Lấy danh sách địa chỉ của người dùng
+router.get('/address', userController.getAddress);
+
 module.exports = router;

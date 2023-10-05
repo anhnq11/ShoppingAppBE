@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 const db = require('../database/database')
-const usersScheme = new db.mongoose.Schema({
+const usersSchema = new db.mongoose.Schema({
     fullname: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true},
@@ -13,14 +13,14 @@ const usersScheme = new db.mongoose.Schema({
     collection: 'users',
 })
 
-const rolesScheme = new db.mongoose.Schema({
+const rolesSchema = new db.mongoose.Schema({
     name: { type: String, required: true },
     status: { type: String, required: true },
 }, {
     collection: 'roles',
 });
 
-const userModel = db.mongoose.model('userModel', usersScheme);
-const roleModel = db.mongoose.model('roleModel', rolesScheme);
+const userModel = db.mongoose.model('userModel', usersSchema);
+const roleModel = db.mongoose.model('roleModel', rolesSchema);
 
 module.exports = { userModel, roleModel };
