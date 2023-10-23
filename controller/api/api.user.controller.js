@@ -132,13 +132,12 @@ exports.addNewAddress = async (req, res, next) => {
 
 // Lấy địa chỉ của User
 exports.getAddress = async (req, res, next) => {
-    log(req.query)
     try {
         let myAddress = await addressModel.addressModel.find(
             { user_id: req.query.user_id}
             );
         if (myAddress.length > 0) {
-            res.status(200).json({ status: 'success', data: myAddress });
+            res.status(200).json(myAddress);
         }
         else {
             res.status(404).json({ status: 'Null' });
@@ -150,3 +149,18 @@ exports.getAddress = async (req, res, next) => {
     }
 }
 
+exports.deleteAddress = async (req, res, next) => {
+    console.log(req.query);
+    try {
+        const rs = await addressModel.addressModel.findByIdAndDelete(req.query._id);
+        if (rs) {
+            return res.status(200).json({ status: 'delete success' });
+        } else {
+            return res.status(404).json({ status: 'error', message: 'Failed to delete cart' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}

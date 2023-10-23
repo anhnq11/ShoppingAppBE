@@ -42,4 +42,7 @@ router.post('/address', userController.addNewAddress);
 // Lấy danh sách địa chỉ của người dùng
 router.get('/address', userController.getAddress);
 
+// Lấy danh sách địa chỉ của người dùng
+router.delete('/address', userController.deleteAddress);
+
 module.exports = router;

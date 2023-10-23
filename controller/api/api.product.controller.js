@@ -127,7 +127,7 @@ exports.getListCart = async (req, res, next) => {
             res.status(200).json(myCart);
         }
         else {
-            res.status(404).json({ status: 'Null' })
+            res.status(201).json({ status: 'Null' })
         }
     }
     catch (err) {
