@@ -22,8 +22,6 @@ exports.listRoles = async (req, res, next) => {
 // Create a new user account
 exports.createNewUser = async (req, res, next) => {
     try {
-
-        console.log(req.body);
         // const file = req.file;
         // const imagePath = fs.readFileSync(file.path);
         // const base64Image = imagePath.toString("base64");
@@ -31,14 +29,14 @@ exports.createNewUser = async (req, res, next) => {
         // const imageBase64 = `data:${mimeType};base64,${base64Image}`;
         const newUser = {
             fullname: req.body.fullname,
-            username: req.body.username,
+            phonenum: req.body.phonenum,
             password: req.body.password,
             email: req.body.email,
             // image: imageBase64,
         }
         const result = await userModel.userModel.create(newUser);
         if (result) {
-            const user = await userModel.userModel.findOne({ username: req.body.username, password: req.body.password }).populate('id_role', 'name');
+            const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum, password: req.body.password }).populate('id_role', 'name');
             res.status(200).json(user);
         }
         else{
@@ -56,7 +54,7 @@ exports.updateUser = async (req, res, next) => {
         await userModel.userModel.findByIdAndUpdate({ _id: req.params.id }, {
             $set: {
                 fullname: req.body.fullname,
-                username: req.body.username,
+                phonenum: req.body.phonenum,
                 password: req.body.password,
                 email: req.body.email,
                 id_role: req.body.id_role,
@@ -73,9 +71,9 @@ exports.updateUser = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         let msg = '';
-        const user = await userModel.userModel.findOne({ username: req.query.username }).populate('id_role', 'name');
+        const user = await userModel.userModel.findOne({ phonenum: req.query.phonenum }).populate('id_role', 'name');
         if (!user || (user.password != req.query.password)) {
-            msg = 'Tên đăng nhập hoặc mật khẩu không chính xác!'
+            msg = 'Số điện thoại hoặc mật khẩu không chính xác!'
             return res.status(404).json({ msg: msg });
         }
         else {
@@ -89,10 +87,10 @@ exports.login = async (req, res, next) => {
     }
 }
 
-// Check valid username
+// Check valid phonenum
 exports.findUser = async (req, res, next) => {
     try {
-        const user = await userModel.userModel.findOne({ username: req.query.username })
+        const user = await userModel.userModel.findOne({ phonenum: req.query.phonenum })
         if (user) {
             return res.status(404).json({ msg: 'User found' });
         }

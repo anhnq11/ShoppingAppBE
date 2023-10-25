@@ -2,7 +2,7 @@ const { Schema } = require('mongoose');
 const db = require('../database/database')
 const usersSchema = new db.mongoose.Schema({
     fullname: { type: String, required: true },
-    username: { type: String, required: true },
+    phonenum: { type: String, required: true },
     password: { type: String, required: true},
     email: { type: String, required: true},
     date: { type: String, required: false},
