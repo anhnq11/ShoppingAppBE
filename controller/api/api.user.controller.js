@@ -31,8 +31,7 @@ exports.createNewUser = async (req, res, next) => {
             fullname: req.body.fullname,
             phonenum: req.body.phonenum,
             password: req.body.password,
-            email: req.body.email,
-            // image: imageBase64,
+             // image: imageBase64,
         }
         const result = await userModel.userModel.create(newUser);
         if (result) {
@@ -92,7 +91,7 @@ exports.findUser = async (req, res, next) => {
     try {
         const user = await userModel.userModel.findOne({ phonenum: req.query.phonenum })
         if (user) {
-            return res.status(404).json({ msg: 'User found' });
+            return res.status(201).json({ msg: 'User found' });
         }
         else {
             return res.status(200).json({ msg: 'User not found' });

@@ -4,7 +4,7 @@ const usersSchema = new db.mongoose.Schema({
     fullname: { type: String, required: true },
     phonenum: { type: String, required: true },
     password: { type: String, required: true},
-    email: { type: String, required: true},
+    email: { type: String, required: false},
     date: { type: String, required: false},
     image: { type: String, required: false},
     id_role: { type: db.mongoose.Schema.Types.ObjectId, required: false, ref: 'roleModel', default: "64aa59b703a5197e30599206"},
