@@ -2,6 +2,7 @@ var userModel = require('../../models/user.model');
 var addressModel = require('../../models/address.model');
 var fs = require('fs');
 const { log } = require('console');
+const bcrypt = require("bcrypt")
 
 exports.listRoles = async (req, res, next) => {
     try {
@@ -22,31 +23,35 @@ exports.listRoles = async (req, res, next) => {
 // Create a new user account
 exports.createNewUser = async (req, res, next) => {
     try {
-        // const file = req.file;
-        // const imagePath = fs.readFileSync(file.path);
-        // const base64Image = imagePath.toString("base64");
-        // const mimeType = file.mimetype;
-        // const imageBase64 = `data:${mimeType};base64,${base64Image}`;
+        const { fullname, phonenum, password } = req.body;
+
+        if (!fullname || !phonenum || !password) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+
+        const hash = await bcrypt.hash(password, salt);
+
         const newUser = {
-            fullname: req.body.fullname,
-            phonenum: req.body.phonenum,
-            password: req.body.password,
-             // image: imageBase64,
-        }
+            fullname,
+            phonenum,
+            password: hash,
+        };
+
         const result = await userModel.userModel.create(newUser);
+
         if (result) {
-            const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum, password: req.body.password }).populate('id_role', 'name');
-            res.status(200).json(user);
+            const user = await userModel.userModel.findOne({ phonenum, password: hash }).populate('id_role', 'name');
+            return res.status(200).json(user);
+        } else {
+            return res.status(404).json({ error: 'User not found' });
         }
-        else{
-            res.status(404);
-        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ status: 'error', message: err.message });
-    }
-}
+};
 
 exports.updateUser = async (req, res, next) => {
     try {
@@ -70,8 +75,17 @@ exports.updateUser = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         let msg = '';
+        const { phonenum, password } = req.body;
+
+        if ( !phonenum || !password) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
         const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum }).populate('id_role', 'name');
-        if (!user || (user.password != req.body.password)) {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        const rsComparePw = await bcrypt.compare(password, user.password);
+        if (!user || !rsComparePw) {
             msg = 'Số điện thoại hoặc mật khẩu không chính xác!'
             return res.status(209).json({ msg: msg });
         }
@@ -117,7 +131,7 @@ exports.addNewAddress = async (req, res, next) => {
         if (result) {
             res.status(200).json(result);
         }
-        else{
+        else {
             res.status(404).json({ status: 'error', message: 'Thêm địa chỉ thất bại!' });
         }
     }
@@ -131,8 +145,8 @@ exports.addNewAddress = async (req, res, next) => {
 exports.getAddress = async (req, res, next) => {
     try {
         let myAddress = await addressModel.addressModel.find(
-            { user_id: req.query.user_id}
-            );
+            { user_id: req.query.user_id }
+        );
         if (myAddress.length > 0) {
             res.status(200).json(myAddress);
         }
