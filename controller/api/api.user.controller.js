@@ -76,14 +76,10 @@ exports.login = async (req, res, next) => {
     try {
         let msg = '';
         const { phonenum, password } = req.body;
-
-        if ( !phonenum || !password) {
+        if (!phonenum || !password) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-
         const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum }).populate('id_role', 'name');
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
         const rsComparePw = await bcrypt.compare(password, user.password);
         if (!user || !rsComparePw) {
             msg = 'Số điện thoại hoặc mật khẩu không chính xác!'
