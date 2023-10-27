@@ -31,7 +31,7 @@ router.get('/roles', userController.listRoles);
 router.post('/regis', upload, userController.createNewUser);
 
 /* Đăng nhập */
-router.get('/login', userController.login);
+router.post('/login', userController.login);
 
 /* Kiểm tra Username */
 router.get('/checkRegis', userController.findUser);

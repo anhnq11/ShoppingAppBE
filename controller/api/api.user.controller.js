@@ -70,10 +70,10 @@ exports.updateUser = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         let msg = '';
-        const user = await userModel.userModel.findOne({ phonenum: req.query.phonenum }).populate('id_role', 'name');
-        if (!user || (user.password != req.query.password)) {
+        const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum }).populate('id_role', 'name');
+        if (!user || (user.password != req.body.password)) {
             msg = 'Số điện thoại hoặc mật khẩu không chính xác!'
-            return res.status(404).json({ msg: msg });
+            return res.status(209).json({ msg: msg });
         }
         else {
             msg = 'Success!'
