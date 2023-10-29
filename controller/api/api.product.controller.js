@@ -157,10 +157,12 @@ exports.addToInvoices = async (req, res, next) => {
         // Add to invoices list
         const newInvoice = {
             user_id: req.body.user_id,
+            username: req.body.username,
+            phonenum: req.body.phonenum,
             listCart: req.body.listCart,
             totalAmount: req.body.totalAmount,
             createdAt: req.body.createdAt,
-            userAddress: req.body.userAddress,
+            userAddress: req.body.address,
             status: req.body.status
         }
         const result = await invoiceModel.invoiceModel.create(newInvoice);

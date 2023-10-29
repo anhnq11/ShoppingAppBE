@@ -142,7 +142,7 @@ exports.getAddress = async (req, res, next) => {
     try {
         let myAddress = await addressModel.addressModel.find(
             { user_id: req.query.user_id }
-        );
+        ).sort({ is_default: -1})
         if (myAddress.length > 0) {
             res.status(200).json(myAddress);
         }
