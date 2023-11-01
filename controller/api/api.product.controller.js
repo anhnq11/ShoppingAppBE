@@ -21,6 +21,22 @@ exports.listCategories = async (req, res, next) => {
     }
 }
 
+exports.listPaymentMethods = async (req, res, next) => {
+    try {
+        let list = await myModels.paymentMethodsModel.find();
+        if (list.length > 0) {
+            res.status(200).json(list);
+        }
+        else {
+            res.status(404).json({ status: 'Null' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
 // Danh sách sản phẩm
 
 exports.listProducts = async (req, res, next) => {
@@ -85,7 +101,7 @@ exports.addQuantityToCart = async (req, res, next) => {
 exports.removeQuantityToCart = async (req, res, next) => {
     try {
         let mQuantity = req.body.quantity;
-        
+
         if (mQuantity >= 2) {
             mQuantity--;
             // Update quantity
@@ -138,7 +154,8 @@ exports.getListCart = async (req, res, next) => {
 
 exports.deleteCart = async (req, res, next) => {
     try {
-        let rs = await cartModel.cartModel.deleteMany({ user_id: req.query.user_id }).populate('product_id')
+        console.log(req.body);
+        let rs = await cartModel.cartModel.deleteMany({ user_id: req.body.user_id }).populate('product_id')
         if (rs) {
             return res.status(200).json({ status: 'delete success' });
         } else {
@@ -154,19 +171,8 @@ exports.deleteCart = async (req, res, next) => {
 
 exports.addToInvoices = async (req, res, next) => {
     try {
-        // Add to invoices list
-        const newInvoice = {
-            user_id: req.body.user_id,
-            username: req.body.username,
-            phonenum: req.body.phonenum,
-            listCart: req.body.listCart,
-            totalAmount: req.body.totalAmount,
-            createdAt: req.body.createdAt,
-            userAddress: req.body.address,
-            status: req.body.status
-        }
-        const result = await invoiceModel.invoiceModel.create(newInvoice);
-        res.status(200).json(result);
+        const createdInvoice = await invoiceModel.invoiceModel.create(req.body);
+        res.status(createdInvoice ? 200 : 500).json(createdInvoice ? createdInvoice : { status: 'error', message: 'Failed to create the invoice.' });
     } catch (err) {
         console.log(err);
         res.status(500).json({ status: 'error', message: err.message });
