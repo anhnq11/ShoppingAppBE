@@ -16,7 +16,14 @@ const catsSchema = new db.mongoose.Schema({
     collection: 'categories',
 });
 
+const paymentSchema = new db.mongoose.Schema({
+    name: { type: String, required: true },
+}, {
+    collection: 'paymentMethods',
+});
+
 const categoryModel = db.mongoose.model('categoryModel', catsSchema);
 const productModel = db.mongoose.model('productModel', productsSchema);
+const paymentMethodsModel = db.mongoose.model('paymentMethodsModel', paymentSchema);
 
-module.exports = { categoryModel, productModel };
+module.exports = { categoryModel, productModel, paymentMethodsModel };

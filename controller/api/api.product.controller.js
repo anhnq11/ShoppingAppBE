@@ -181,12 +181,13 @@ exports.addToInvoices = async (req, res, next) => {
 
 exports.getInvoices = async (req, res, next) => {
     try {
-        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id });
+        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id }).populate('userAddress')
+        .populate('paymentMethod').populate('status')
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
         }
         else {
-            res.status(404).json({ status: 'Null' })
+            res.status(500).json({ status: 'Null' })
         }
     }
     catch (err) {
