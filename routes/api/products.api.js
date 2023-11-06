@@ -45,6 +45,8 @@ router.post('/invoices', productsController.addToInvoices);
 // Lấy danh sách giỏ hàng
 router.get('/invoices', productsController.getInvoices);
 
+router.put('/invoices', productsController.updateInvoices);
+
 // Get favourite
 router.get('/favours/details', productsController.getFavours);
 

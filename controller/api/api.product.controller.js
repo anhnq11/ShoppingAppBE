@@ -181,7 +181,8 @@ exports.addToInvoices = async (req, res, next) => {
 
 exports.getInvoices = async (req, res, next) => {
     try {
-        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id }).populate('userAddress')
+        console.log(req.query);
+        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: req.query.isDone }).populate('userAddress')
         .populate('paymentMethod').populate('status')
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
@@ -195,6 +196,24 @@ exports.getInvoices = async (req, res, next) => {
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
+
+exports.updateInvoices = async (req, res) => {
+    try {
+        const invoice = await invoiceModel.invoiceModel.findByIdAndUpdate(req.query._id, 
+            { isDone: true}, 
+            { new: true });
+
+        if (!invoice) {
+            return res.status(404).json({ message: 'Invoice not found' });
+        }
+
+        res.status(200).json({ message: 'Invoice updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error updating the invoice' });
+    }
+};
+
 
 // Sản phẩm yêu thích
 

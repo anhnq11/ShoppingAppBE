@@ -11,6 +11,7 @@ const invoicesSchema = new db.mongoose.Schema({
     userAddress: { type: db.mongoose.Schema.Types.ObjectId, required: true, ref: 'addressModel' },
     paymentMethod: { type: db.mongoose.Schema.Types.ObjectId, required: true, ref: 'paymentMethodsModel' },
     status: { type: db.mongoose.Schema.Types.ObjectId, required: false, ref: 'orderStatusModel', default: '65427e876c0c1e32f27a8599'},
+    isDone: { type: Boolean, required: false, default: false},
 }, {
     collection: 'invoices',
 })
