@@ -18,6 +18,7 @@ const upload = multer({ storage: storage }).single('image');
 
 // Lấy danh sách sản phẩm
 router.get('/products', productsController.listProducts);
+router.get('/newproducts', productsController.listNewProducts);
 
 router.get('/payment_methods', productsController.listPaymentMethods);
 
@@ -44,6 +45,7 @@ router.post('/invoices', productsController.addToInvoices);
 
 // Lấy danh sách giỏ hàng
 router.get('/invoices', productsController.getInvoices);
+router.get('/recentOrder', productsController.recentOrder);
 
 router.put('/invoices', productsController.updateInvoices);
 

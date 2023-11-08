@@ -5,6 +5,7 @@ const productsSchema = new db.mongoose.Schema({
     price: { type: Number, required: true},
     desc: { type: String, required: false},
     image: { type: String, required: true },
+    createdAt: { type: Date, required: true},
     id_cat: { type: db.mongoose.Schema.Types.ObjectId, required: true, ref: 'categoryModel'}
 }, {
     collection: 'products',

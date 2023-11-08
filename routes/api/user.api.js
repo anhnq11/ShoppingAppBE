@@ -30,6 +30,8 @@ router.get('/roles', userController.listRoles);
 /* POST Đăng ký tài khoản từ Client */
 router.post('/regis', upload, userController.createNewUser);
 
+router.post('/update', userController.updateUser);
+
 /* Đăng nhập */
 router.post('/login', userController.login);
 

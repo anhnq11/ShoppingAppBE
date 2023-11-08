@@ -55,6 +55,23 @@ exports.listProducts = async (req, res, next) => {
     }
 }
 
+// Danh sách sản phẩm
+
+exports.listNewProducts = async (req, res, next) => {
+    try {
+        const listProducts = await myModels.productModel
+            .find()
+            .populate('id_cat', 'name')
+            .sort('-createdAt')
+            .limit(3);
+
+        res.status(listProducts.length > 0 ? 200 : 404).json(listProducts.length > 0 ? listProducts : { status: 'No products found' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+};
+
 // Giỏ hàng
 exports.addQuantityToCart = async (req, res, next) => {
     try {
@@ -181,11 +198,31 @@ exports.addToInvoices = async (req, res, next) => {
 
 exports.getInvoices = async (req, res, next) => {
     try {
-        console.log(req.query);
         let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: req.query.isDone }).populate('userAddress')
         .populate('paymentMethod').populate('status')
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
+        }
+        else {
+            res.status(500).json({ status: 'Null' })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+exports.recentOrder = async (req, res, next) => {
+    try {
+        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: true })
+        if (myInvoices.length != 0) {
+            let productList = []
+            myInvoices.forEach(element => {
+                productList = productList.concat(element.listCart)
+            })
+            let mProductsList = productList.slice(productList.length - 3, productList.length);
+            res.status(200).json(mProductsList.reverse());
         }
         else {
             res.status(500).json({ status: 'Null' })

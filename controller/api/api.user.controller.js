@@ -2,7 +2,12 @@ var userModel = require('../../models/user.model');
 var addressModel = require('../../models/address.model');
 var fs = require('fs');
 const { log } = require('console');
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 exports.listRoles = async (req, res, next) => {
     try {
@@ -55,21 +60,30 @@ exports.createNewUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        await userModel.userModel.findByIdAndUpdate({ _id: req.params.id }, {
-            $set: {
-                fullname: req.body.fullname,
-                phonenum: req.body.phonenum,
-                password: req.body.password,
-                email: req.body.email,
-                id_role: req.body.id_role,
-            }
-        })
+        const { _id, fullname, phonenum, email, image } = req.body;
+
+        const updatedUser = await userModel.userModel.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    fullname,
+                    phonenum,
+                    email,
+                    image,
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ status: 'error', message: err.message });
-    }
-}
+};
 
 // Đăng nhập
 exports.login = async (req, res, next) => {
@@ -142,7 +156,7 @@ exports.getAddress = async (req, res, next) => {
     try {
         let myAddress = await addressModel.addressModel.find(
             { user_id: req.query.user_id }
-        ).sort({ is_default: -1})
+        ).sort({ is_default: -1 })
         if (myAddress.length > 0) {
             res.status(200).json(myAddress);
         }
