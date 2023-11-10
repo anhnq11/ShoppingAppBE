@@ -13,7 +13,7 @@ exports.listRoles = async (req, res, next) => {
     try {
         let listRoles = await userModel.roleModel.find();
         if (listRoles.length > 0) {
-            res.status(200).json({ status: 'success', data: listRoles });
+            res.status(200).json(listRoles);
         }
         else {
             res.status(404).json({ status: 'Null' });
@@ -21,6 +21,16 @@ exports.listRoles = async (req, res, next) => {
     }
     catch (err) {
         console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+exports.getListUsers = async (req, res, next) => {
+    try {
+        const list = await userModel.userModel.find().populate('id_role');
+        res.status(list.length > 0 ? 200 : 404).json(list.length > 0 ? list : { status: 'Null' });
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
@@ -47,7 +57,7 @@ exports.createNewUser = async (req, res, next) => {
         const result = await userModel.userModel.create(newUser);
 
         if (result) {
-            const user = await userModel.userModel.findOne({ phonenum, password: hash }).populate('id_role', 'name');
+            const user = await userModel.userModel.findOne({ phonenum, password: hash }).populate('id_role');
             return res.status(200).json(user);
         } else {
             return res.status(404).json({ error: 'User not found' });
@@ -85,6 +95,45 @@ exports.updateUser = async (req, res, next) => {
     }
 };
 
+exports.updateUserRole = async (req, res, next) => {
+    try {
+        const { _id, id_role } = req.body;
+
+        const updatedUser = await userModel.userModel.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    id_role,
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+};
+
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const rs = await userModel.userModel.findByIdAndDelete(req.query._id);
+        if (rs) {
+            return res.status(200).json({ status: 'delete success' });
+        } else {
+            return res.status(404).json({ status: 'error', message: 'Failed to delete user' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
 // Đăng nhập
 exports.login = async (req, res, next) => {
     try {
@@ -93,7 +142,7 @@ exports.login = async (req, res, next) => {
         if (!phonenum || !password) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-        const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum }).populate('id_role', 'name');
+        const user = await userModel.userModel.findOne({ phonenum: req.body.phonenum }).populate('id_role');
         const rsComparePw = await bcrypt.compare(password, user.password);
         if (!user || !rsComparePw) {
             msg = 'Số điện thoại hoặc mật khẩu không chính xác!'
@@ -171,7 +220,6 @@ exports.getAddress = async (req, res, next) => {
 }
 
 exports.deleteAddress = async (req, res, next) => {
-    console.log(req.query);
     try {
         const rs = await addressModel.addressModel.findByIdAndDelete(req.query._id);
         if (rs) {

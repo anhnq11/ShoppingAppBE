@@ -19,18 +19,16 @@ const upload = multer({ storage: storage }).single('image');
 
 /* GET List Role. */
 router.get('/roles', userController.listRoles);
-// GET List Role.
-// router.get('/users', userController.listUsers);
 
-// Delete product
-// router.delete('/products/delete/:id', userController.de);
-// Update product
-// router.put('/products/update/:id', userController.updateProduct);
+router.get('/users', userController.getListUsers);
 
 /* POST Đăng ký tài khoản từ Client */
 router.post('/regis', upload, userController.createNewUser);
 
 router.post('/update', userController.updateUser);
+router.post('/updateRole', userController.updateUserRole);
+router.delete('/user', userController.deleteUser);
+
 
 /* Đăng nhập */
 router.post('/login', userController.login);

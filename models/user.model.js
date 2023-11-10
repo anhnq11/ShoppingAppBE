@@ -16,6 +16,7 @@ const usersSchema = new db.mongoose.Schema({
 const rolesSchema = new db.mongoose.Schema({
     name: { type: String, required: true },
     status: { type: String, required: true },
+    level: { type: Number, required: false },
 }, {
     collection: 'roles',
 });
