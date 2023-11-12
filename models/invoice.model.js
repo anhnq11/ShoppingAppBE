@@ -20,6 +20,7 @@ const invoiceModel = db.mongoose.model('invoiceModel', invoicesSchema);
 
 const orderStatusSchema = new db.mongoose.Schema({
     name: { type: String, required: true},
+    status: { type: Number, required: false},
 }, {
     collection: 'orderStatus',
 })

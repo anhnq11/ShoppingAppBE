@@ -21,6 +21,22 @@ exports.listCategories = async (req, res, next) => {
     }
 }
 
+exports.listInvoicesStatus = async (req, res, next) => {
+    try {
+        let list = await invoiceModel.orderStatusModel.find();
+        if (list.length > 0) {
+            res.status(200).json(list);
+        }
+        else {
+            res.status(404).json({ status: 'Null' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
 exports.listPaymentMethods = async (req, res, next) => {
     try {
         let list = await myModels.paymentMethodsModel.find();
@@ -198,8 +214,16 @@ exports.addToInvoices = async (req, res, next) => {
 
 exports.getInvoices = async (req, res, next) => {
     try {
-        let myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: req.query.isDone }).populate('userAddress')
-        .populate('paymentMethod').populate('status')
+        let myInvoices;
+        if(req.query.user_id != undefined){
+            myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: req.query.isDone }).populate('userAddress')
+            .populate('paymentMethod').populate('status')
+        }
+        else{
+            myInvoices = await invoiceModel.invoiceModel.find().populate('userAddress')
+            .populate('paymentMethod')
+            .populate('status')
+        }
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
         }

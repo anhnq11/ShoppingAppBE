@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('image');
 
+router.get('/status', productsController.listInvoicesStatus);
 // Lấy danh sách sản phẩm
 router.get('/products', productsController.listProducts);
 router.get('/newproducts', productsController.listNewProducts);
