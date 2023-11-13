@@ -23,8 +23,10 @@ router.get('/newproducts', productsController.listNewProducts);
 
 router.get('/payment_methods', productsController.listPaymentMethods);
 
-// Get list categories
-// router.get('/categories', productsController.listCategories);
+// Thể loại
+router.post('/categories', productsController.addCategories);
+router.get('/categories', productsController.listCategories);
+router.put('/categories', productsController.updateCategories);
 
 // Lấy danh sách giỏ hàng
 router.get('/carts', productsController.getListCart);
@@ -43,9 +45,9 @@ router.delete('/carts', productsController.deleteCart);
 
 // Thanh toán giỏ hàng. Tạo hóa đơn
 router.post('/invoices', productsController.addToInvoices);
-
-// Lấy danh sách giỏ hàng
 router.get('/invoices', productsController.getInvoices);
+router.post('/invoicesStatus', productsController.updateInvoicesStatus);
+
 router.get('/recentOrder', productsController.recentOrder);
 
 router.put('/invoices', productsController.updateInvoices);

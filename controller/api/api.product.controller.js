@@ -5,11 +5,22 @@ var favoursModel = require('../../models/favourites.model');
 var fs = require('fs');
 const { log } = require('console');
 
+// Thể loại
+exports.addCategories = async (req, res, next) => {
+    try {
+        const rs = await myModels.categoryModel.create(req.body);
+        res.status(rs ? 200 : 500).json(rs ? rs : { status: 'error', message: 'Failed to create the invoice.' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
 exports.listCategories = async (req, res, next) => {
     try {
         let listCategories = await myModels.categoryModel.find();
         if (listCategories.length > 0) {
-            res.status(200).json({ status: 'success', data: listCategories });
+            res.status(200).json(listCategories);
         }
         else {
             res.status(404).json({ status: 'Null' });
@@ -20,6 +31,30 @@ exports.listCategories = async (req, res, next) => {
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
+
+exports.updateCategories = async (req, res) => {
+    try {
+        const { _id, name } = req.body;
+
+        const rs = await myModels.categoryModel.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    name,
+                }
+            },
+            { new: true }
+        );
+
+        if (!rs) {
+            return res.status(404).json({ status: 'error', message: 'Category not found' });
+        }
+        res.status(200).json(rs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+};
 
 exports.listInvoicesStatus = async (req, res, next) => {
     try {
@@ -201,7 +236,6 @@ exports.deleteCart = async (req, res, next) => {
 }
 
 // Hóa đơn
-
 exports.addToInvoices = async (req, res, next) => {
     try {
         const createdInvoice = await invoiceModel.invoiceModel.create(req.body);
@@ -223,6 +257,7 @@ exports.getInvoices = async (req, res, next) => {
             myInvoices = await invoiceModel.invoiceModel.find().populate('userAddress')
             .populate('paymentMethod')
             .populate('status')
+            .sort({ 'status': 1 })
         }
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
@@ -236,6 +271,30 @@ exports.getInvoices = async (req, res, next) => {
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
+
+exports.updateInvoicesStatus = async (req, res, next) => {
+    try {
+        const { _id, status } = req.body;
+
+        const rs = await invoiceModel.invoiceModel.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    status,
+                }
+            },
+            { new: true }
+        );
+
+        if (!rs) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+        res.status(200).json(rs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+};
 
 exports.recentOrder = async (req, res, next) => {
     try {
