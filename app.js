@@ -14,7 +14,7 @@ var apiProductsRouter = require('./routes/api/products.api');
 var apiUsersRouter = require('./routes/api/user.api');
 
 var app = express(express.static(__dirname + './public/images/'));
-app.use(bodyParser.json({limit: '200kb'}));
+app.use(bodyParser.json({limit: '2000kb'}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

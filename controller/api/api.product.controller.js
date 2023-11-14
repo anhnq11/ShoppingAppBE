@@ -63,7 +63,7 @@ exports.listInvoicesStatus = async (req, res, next) => {
             res.status(200).json(list);
         }
         else {
-            res.status(404).json({ status: 'Null' });
+            res.status().json({ status: 'Null' });
         }
     }
     catch (err) {
@@ -308,7 +308,7 @@ exports.recentOrder = async (req, res, next) => {
             res.status(200).json(mProductsList.reverse());
         }
         else {
-            res.status(500).json({ status: 'Null' })
+            res.status(200).json([])
         }
     }
     catch (err) {
@@ -345,7 +345,7 @@ exports.getFavours = async (req, res, next) => {
             res.status(200).json(myFavours);
         }
         else {
-            res.status(404).json({ status: 'Null' })
+            res.status(200).json([])
         }
     }
     catch (err) {
@@ -363,7 +363,7 @@ exports.getListFavours = async (req, res, next) => {
             res.status(200).json(myFavours);
         }
         else {
-            res.status(404).json({ status: 'Null' })
+            res.status(200).json([])
         }
     }
     catch (err) {

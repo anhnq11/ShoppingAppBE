@@ -38,7 +38,13 @@ exports.getListUsers = async (req, res, next) => {
 // Create a new user account
 exports.createNewUser = async (req, res, next) => {
     try {
-        const { fullname, phonenum, password } = req.body;
+        const { fullname, 
+            phonenum, 
+            password,
+            email,
+            image,
+            id_role
+        } = req.body;
 
         if (!fullname || !phonenum || !password) {
             return res.status(400).json({ error: 'Missing required fields' });
@@ -52,6 +58,9 @@ exports.createNewUser = async (req, res, next) => {
             fullname,
             phonenum,
             password: hash,
+            email,
+            image,
+            id_role
         };
 
         const result = await userModel.userModel.create(newUser);
