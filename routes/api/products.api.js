@@ -20,6 +20,8 @@ router.get('/status', productsController.listInvoicesStatus);
 // Lấy danh sách sản phẩm
 router.post('/products', productsController.createNewProducts);
 router.get('/products', productsController.listProducts);
+router.post('/products', productsController.createNewProducts);
+router.put('/products', productsController.updateProducts);
 router.get('/newproducts', productsController.listNewProducts);
 
 router.get('/payment_methods', productsController.listPaymentMethods);

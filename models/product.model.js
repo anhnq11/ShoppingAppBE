@@ -1,4 +1,3 @@
-const { Schema } = require('mongoose');
 const db = require('../database/database')
 const productsSchema = new db.mongoose.Schema({
     name: { type: String, required: true },
@@ -6,6 +5,7 @@ const productsSchema = new db.mongoose.Schema({
     desc: { type: String, required: false},
     image: { type: String, required: true },
     createdAt: { type: Date, required: true},
+    status: { type: Boolean, required: false, default: false },
     id_cat: { type: db.mongoose.Schema.Types.ObjectId, required: true, ref: 'categoryModel'}
 }, {
     collection: 'products',

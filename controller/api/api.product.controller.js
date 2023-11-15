@@ -2,7 +2,6 @@ var myModels = require('../../models/product.model');
 var cartModel = require('../../models/cart.model');
 var invoiceModel = require('../../models/invoice.model');
 var favoursModel = require('../../models/favourites.model');
-var fs = require('fs');
 const { log } = require('console');
 
 // Thể loại
@@ -107,11 +106,10 @@ exports.listProducts = async (req, res, next) => {
 }
 
 // Danh sách sản phẩm
-// Create a new user account
 exports.createNewProducts = async (req, res, next) => {
     try {
-        const { name, 
-            price, 
+        const { name,
+            price,
             desc,
             id_cat,
             image,
@@ -126,7 +124,7 @@ exports.createNewProducts = async (req, res, next) => {
             image,
             createdAt
         }
-        
+
         const result = await myModels.productModel.create(newProduct);
 
         if (result) {
@@ -137,6 +135,42 @@ exports.createNewProducts = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.updateProducts = async (req, res, next) => {
+    try {
+        const { _id,
+            name,
+            price,
+            desc,
+            id_cat,
+            image,
+            status
+            } = req.body;
+
+        const rs = await myModels.productModel.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    name,
+                    price,
+                    desc,
+                    id_cat,
+                    image,
+                    status
+                }
+            },
+            { new: true }
+        );
+
+        if (!rs) {
+            return res.status(201).json({ status: 'error', message: 'Update Fail' });
+        }
+        res.status(200).json(rs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
     }
 };
 
@@ -281,15 +315,15 @@ exports.addToInvoices = async (req, res, next) => {
 exports.getInvoices = async (req, res, next) => {
     try {
         let myInvoices;
-        if(req.query.user_id != undefined){
+        if (req.query.user_id != undefined) {
             myInvoices = await invoiceModel.invoiceModel.find({ user_id: req.query.user_id, isDone: req.query.isDone }).populate('userAddress')
-            .populate('paymentMethod').populate('status')
+                .populate('paymentMethod').populate('status')
         }
-        else{
+        else {
             myInvoices = await invoiceModel.invoiceModel.find().populate('userAddress')
-            .populate('paymentMethod')
-            .populate('status')
-            .sort({ 'status': 1 })
+                .populate('paymentMethod')
+                .populate('status')
+                .sort({ 'status': 1 })
         }
         if (myInvoices.length != 0) {
             res.status(200).json(myInvoices);
@@ -351,8 +385,8 @@ exports.recentOrder = async (req, res, next) => {
 
 exports.updateInvoices = async (req, res) => {
     try {
-        const invoice = await invoiceModel.invoiceModel.findByIdAndUpdate(req.query._id, 
-            { isDone: true}, 
+        const invoice = await invoiceModel.invoiceModel.findByIdAndUpdate(req.query._id,
+            { isDone: true },
             { new: true });
 
         if (!invoice) {
