@@ -107,6 +107,38 @@ exports.listProducts = async (req, res, next) => {
 }
 
 // Danh sách sản phẩm
+// Create a new user account
+exports.createNewProducts = async (req, res, next) => {
+    try {
+        const { name, 
+            price, 
+            desc,
+            id_cat,
+            image,
+            createdAt
+        } = req.body;
+
+        const newProduct = {
+            name,
+            price,
+            desc,
+            id_cat,
+            image,
+            createdAt
+        }
+        
+        const result = await myModels.productModel.create(newProduct);
+
+        if (result) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(500).json({ error: 'Add product fail' });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 exports.listNewProducts = async (req, res, next) => {
     try {
