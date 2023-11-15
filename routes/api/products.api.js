@@ -19,7 +19,8 @@ const upload = multer({ storage: storage }).single('image');
 router.get('/status', productsController.listInvoicesStatus);
 // Lấy danh sách sản phẩm
 router.post('/products', productsController.createNewProducts);
-router.get('/products', productsController.listProducts);
+router.get('/allproducts', productsController.getAllProducts);
+router.get('/products', productsController.getProducts);
 router.post('/products', productsController.createNewProducts);
 router.put('/products', productsController.updateProducts);
 router.get('/newproducts', productsController.listNewProducts);

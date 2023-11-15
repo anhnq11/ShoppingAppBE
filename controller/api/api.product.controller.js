@@ -89,9 +89,27 @@ exports.listPaymentMethods = async (req, res, next) => {
 
 // Danh sách sản phẩm
 
-exports.listProducts = async (req, res, next) => {
+exports.getAllProducts = async (req, res, next) => {
     try {
-        let listProducts = await myModels.productModel.find().populate('id_cat', 'name');
+        let listProducts = await myModels.productModel.find().populate('id_cat', 'name').sort({ 'status': 1 })
+        ;
+        if (listProducts.length > 0) {
+            res.status(200).json(listProducts);
+        }
+        else {
+            res.status(404).json({ status: 'Null' });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+}
+
+exports.getProducts = async (req, res, next) => {
+    try {
+        let listProducts = await myModels.productModel.find({ status: false }).populate('id_cat', 'name').sort({ 'status': 1 })
+        ;
         if (listProducts.length > 0) {
             res.status(200).json(listProducts);
         }
