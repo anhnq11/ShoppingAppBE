@@ -50,6 +50,7 @@ router.delete('/carts', productsController.deleteCart);
 // Thanh toán giỏ hàng. Tạo hóa đơn
 router.post('/invoices', productsController.addToInvoices);
 router.get('/invoices', productsController.getInvoices);
+router.get('/getTotalRevenue', productsController.getTotalRevenue);
 router.post('/invoicesStatus', productsController.updateInvoicesStatus);
 
 router.get('/recentOrder', productsController.recentOrder);

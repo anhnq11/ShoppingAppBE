@@ -92,7 +92,7 @@ exports.listPaymentMethods = async (req, res, next) => {
 exports.getAllProducts = async (req, res, next) => {
     try {
         let listProducts = await myModels.productModel.find().populate('id_cat', 'name').sort({ 'status': 1 })
-        ;
+            ;
         if (listProducts.length > 0) {
             res.status(200).json(listProducts);
         }
@@ -109,7 +109,7 @@ exports.getAllProducts = async (req, res, next) => {
 exports.getProducts = async (req, res, next) => {
     try {
         let listProducts = await myModels.productModel.find({ status: false }).populate('id_cat', 'name').sort({ 'status': 1 })
-        ;
+            ;
         if (listProducts.length > 0) {
             res.status(200).json(listProducts);
         }
@@ -165,7 +165,7 @@ exports.updateProducts = async (req, res, next) => {
             id_cat,
             image,
             status
-            } = req.body;
+        } = req.body;
 
         const rs = await myModels.productModel.findByIdAndUpdate(
             _id,
@@ -356,6 +356,32 @@ exports.getInvoices = async (req, res, next) => {
     }
 }
 
+// Tổng doanh thu
+exports.getTotalRevenue = async (req, res, next) => {
+    try {
+        let myInvoices = await invoiceModel.invoiceModel.find().populate('userAddress')
+        let totalRevenue = 0
+        let totalRevenueOfMonth = 0
+        let thisMonth = new Date().getMonth() + 1
+        if (myInvoices.length > 0) {
+            myInvoices.forEach(element => {
+                totalRevenue += element.totalAmount
+                if(element.createdAt.startsWith(thisMonth)){
+                    totalRevenueOfMonth += element.totalAmount
+                }
+            });
+        }
+        else {
+            res.status(500).json({ status: 'Null' })
+        }
+        res.status(200).json({totalRevenue: totalRevenue, thisMonth: thisMonth, totalRevenueOfMonth: totalRevenueOfMonth});
+    }
+    catch (err) {
+    console.log(err);
+    res.status(500).json({ status: 'error', message: err.message });
+}
+}
+
 exports.updateInvoicesStatus = async (req, res, next) => {
     try {
         const { _id, status } = req.body;
@@ -421,7 +447,6 @@ exports.updateInvoices = async (req, res) => {
 
 // Sản phẩm yêu thích
 
-// Get 
 exports.getFavours = async (req, res, next) => {
     try {
         let myFavours = await favoursModel.favoursModel.findOne({ user_id: req.query.user_id, product_id: req.query.product_id });
