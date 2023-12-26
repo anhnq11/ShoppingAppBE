@@ -1,13 +1,9 @@
 var userModel = require('../../models/user.model');
 var addressModel = require('../../models/address.model');
-var fs = require('fs');
-const { log } = require('console');
 const bcrypt = require("bcrypt");
 const multer = require('multer');
-const path = require('path');
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 exports.listRoles = async (req, res, next) => {
     try {
@@ -79,14 +75,13 @@ exports.createNewUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        const { _id, fullname, phonenum, email, image } = req.body;
+        const { _id, fullname, email, image } = req.body;
 
         const updatedUser = await userModel.userModel.findByIdAndUpdate(
             _id,
             {
                 $set: {
                     fullname,
-                    phonenum,
                     email,
                     image,
                 }
