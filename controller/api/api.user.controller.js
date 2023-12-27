@@ -34,8 +34,8 @@ exports.getListUsers = async (req, res, next) => {
 // Create a new user account
 exports.createNewUser = async (req, res, next) => {
     try {
-        const { fullname, 
-            phonenum, 
+        const { fullname,
+            phonenum,
             password,
             email,
             image,
@@ -183,23 +183,15 @@ exports.findUser = async (req, res, next) => {
 // Thêm địa chỉ mới
 exports.addNewAddress = async (req, res, next) => {
     try {
-        const newAddress = {
-            user_id: req.body.user_id,
-            addressname: req.body.addressname,
-            address: req.body.address,
-            address_details: req.body.address_details,
-            is_default: req.body.is_default,
-        }
-        const result = await addressModel.addressModel.create(newAddress);
+        const result = await addressModel.addressModel.create(req.body);
         if (result) {
             res.status(200).json(result);
         }
         else {
-            res.status(404).json({ status: 'error', message: 'Thêm địa chỉ thất bại!' });
+            res.status(500).json({ status: 'error', message: 'Thêm địa chỉ thất bại!' });
         }
     }
     catch (err) {
-        console.log(err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
@@ -210,12 +202,7 @@ exports.getAddress = async (req, res, next) => {
         let myAddress = await addressModel.addressModel.find(
             { user_id: req.query.user_id }
         ).sort({ is_default: -1 })
-        if (myAddress.length > 0) {
-            res.status(200).json(myAddress);
-        }
-        else {
-            res.status(404).json({ status: 'Null' });
-        }
+        res.status(200).json(myAddress)
     }
     catch (err) {
         console.log(err);
@@ -223,7 +210,7 @@ exports.getAddress = async (req, res, next) => {
     }
 }
 
-exports.deleteAddress = async (req, res, next) => {
+exports.deleteAddress = async (req, res) => {
     try {
         const rs = await addressModel.addressModel.findByIdAndDelete(req.query._id);
         if (rs) {
