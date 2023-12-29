@@ -45,7 +45,7 @@ router.put('/carts', productsController.removeQuantityToCart);
 router.delete('/carts/item', productsController.deleteProductsFromCart);
 
 // Xóa giỏ hàng
-router.delete('/carts', productsController.deleteCart);
+// router.delete('/carts', productsController.deleteCart);
 
 // Thanh toán giỏ hàng. Tạo hóa đơn
 router.post('/invoices', productsController.addToInvoices);

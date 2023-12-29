@@ -304,28 +304,32 @@ exports.getListCart = async (req, res, next) => {
     }
 }
 
-exports.deleteCart = async (req, res, next) => {
-    try {
-        console.log(req.body);
-        let rs = await cartModel.cartModel.deleteMany({ user_id: req.body.user_id }).populate('product_id')
-        if (rs) {
-            return res.status(200).json({ status: 'delete success' });
-        } else {
-            return res.status(500).json({ status: 'error', message: 'Failed to delete cart' });
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ status: 'error', message: err.message });
-    }
-}
+// exports.deleteCart = async (userData, res, next) => {
+//     try {
+//         let rs = 
+//         if (rs) {
+//             return res.status(200).json({ status: 'delete success' });
+//         } else {
+//             return res.status(500).json({ status: 'error', message: 'Failed to delete cart' });
+//         }
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ status: 'error', message: err.message });
+//     }
+// }
 
 // Hóa đơn
 exports.addToInvoices = async (req, res, next) => {
     try {
         const createdInvoice = await invoiceModel.invoiceModel.create(req.body);
-        res.status(createdInvoice ? 200 : 500).json(createdInvoice ? createdInvoice : { status: 'error', message: 'Failed to create the invoice.' });
+        if (createdInvoice) {
+            await cartModel.cartModel.deleteMany({ user_id: req.body.user_id }).populate('product_id')
+            res.status(200).json(createdInvoice)
+        }
+        else {
+            res.status(500).json({ status: 'error', message: 'Failed to create the invoice.' })
+        }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 }
@@ -366,7 +370,7 @@ exports.getTotalRevenue = async (req, res, next) => {
         if (myInvoices.length > 0) {
             myInvoices.forEach(element => {
                 totalRevenue += element.totalAmount
-                if(element.createdAt.startsWith(thisMonth)){
+                if (element.createdAt.startsWith(thisMonth)) {
                     totalRevenueOfMonth += element.totalAmount
                 }
             });
@@ -374,12 +378,12 @@ exports.getTotalRevenue = async (req, res, next) => {
         else {
             res.status(500).json({ status: 'Null' })
         }
-        res.status(200).json({totalRevenue: totalRevenue, thisMonth: thisMonth, totalRevenueOfMonth: totalRevenueOfMonth});
+        res.status(200).json({ totalRevenue: totalRevenue, thisMonth: thisMonth, totalRevenueOfMonth: totalRevenueOfMonth });
     }
     catch (err) {
-    console.log(err);
-    res.status(500).json({ status: 'error', message: err.message });
-}
+        console.log(err);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
 }
 
 exports.updateInvoicesStatus = async (req, res, next) => {
